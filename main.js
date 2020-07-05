@@ -3,22 +3,52 @@ let accountsTableBody = document.querySelector("#accounts-table-body");
 // let addAccountsViewBtn = document.querySelector("[href=add-account-view");
 let accountsView = document.querySelector("#accounts-view");
 let addAccountView = document.querySelector("#add-account-view");
-let allLinks=document.querySelectorAll(".nav-link")
-let views=document.querySelectorAll(".view")
+let allLinks = document.querySelectorAll(".nav-link");
+let views = document.querySelectorAll(".view");
+let idInput = document.querySelector("[placeholder=id]");
+let nameInput = document.querySelector("[placeholder=name]");
+let lastNameInput = document.querySelector("[placeholder=lastName]");
+let emailInput = document.querySelector("[placeholder=email]");
+let phoneInput = document.querySelector("[placeholder=phone]");
+let saveBtn = document.querySelector("#save");
 
-for(let i=0; i<allLinks.length; i++){
-    allLinks[i].addEventListener("click", showView)
+// Save account for db
+saveBtn.addEventListener("click", saveAccount);
+
+function saveAccount() {
+  const newAccount = {
+    id: idInput.value,
+    name: nameInput.value,
+    lastname: lastNameInput.value,
+    email: emailInput.value,
+    phone: phoneInput.value,
+  };
+  db.push(newAccount);
+  idInput.value="";
+  nameInput.value="";
+  lastNameInput.value="";
+  emailInput.value="";
+  phoneInput.value=""
+  createAccountsTable();
+  showView("#accounts-view");
 }
 
-function showView(e){
-    e.preventDefault();
-    for(let i=0; i<views.length; i++){
-        views[i].style.display="none"
+// Show View
+for (let i = 0; i < allLinks.length; i++) {
+  allLinks[i].addEventListener("click", showView);
+}
 
-    }
-    let id=`#${this.getAttribute("href")}`;
-    document.querySelector(id).style.display="block"
-    
+function showView(e) {
+  for (let i = 0; i < views.length; i++) {
+    views[i].style.display = "none";
+  }
+  if (e instanceof Event) {
+    e.preventDefault();
+    let id = `#${this.getAttribute("href")}`;
+    document.querySelector(id).style.display = "block";
+  } else {
+      document.querySelector(e).style.display="block"//showView("#accounts-view")
+  }
 }
 
 // First way
@@ -34,7 +64,6 @@ function showView(e){
 //   addAccountView.style.display = "none";
 //   accountsView.style.display = "block";
 // });
-
 
 createAccountsTable();
 
