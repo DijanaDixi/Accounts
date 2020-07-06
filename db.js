@@ -20,4 +20,8 @@ let db=[
         email:"tedy.2018@live.com",
         phone:'40-33-55-78'
     }
-]
+];
+
+if(localStorage.db){
+    db=JSON.parse(localStorage.db);
+}

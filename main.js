@@ -1,6 +1,6 @@
+window.addEventListener("beforeunload", save);
+
 let accountsTableBody = document.querySelector("#accounts-table-body");
-// let accountsViewBtn = document.querySelector("[href=accounts-view");
-// let addAccountsViewBtn = document.querySelector("[href=add-account-view");
 let accountsView = document.querySelector("#accounts-view");
 let addAccountView = document.querySelector("#add-account-view");
 let allLinks = document.querySelectorAll(".nav-link");
@@ -11,8 +11,31 @@ let lastNameInput = document.querySelector("[placeholder=lastName]");
 let emailInput = document.querySelector("[placeholder=email]");
 let phoneInput = document.querySelector("[placeholder=phone]");
 let saveBtn = document.querySelector("#save");
+let eId = document.querySelector(".eId");
+let eName = document.querySelector(".eName");
+let eLastName = document.querySelector(".eLastName");
+let eEmail = document.querySelector(".eEmail");
+let ePhone = document.querySelector(".ePhone");
+let editBtn = document.querySelector("#edit");
+let id;
 
-// Save account for db
+// Edit Account
+editBtn.addEventListener("click", saveEditedAccount);
+
+function saveEditedAccount() {
+  const editedAccount = {
+    id: eId.value,
+    name: eName.value,
+    lastname: eLastName.value,
+    email: eEmail.value,
+    phone: ePhone.value,
+  };
+  db[id] = editedAccount;
+  createAccountsTable();
+  showView("#accounts-view");
+}
+
+// Save Account for dB
 saveBtn.addEventListener("click", saveAccount);
 
 function saveAccount() {
@@ -24,11 +47,13 @@ function saveAccount() {
     phone: phoneInput.value,
   };
   db.push(newAccount);
-  idInput.value="";
-  nameInput.value="";
-  lastNameInput.value="";
-  emailInput.value="";
-  phoneInput.value=""
+
+  idInput.value = "";
+  nameInput.value = "";
+  lastNameInput.value = "";
+  emailInput.value = "";
+  phoneInput.value = "";
+
   createAccountsTable();
   showView("#accounts-view");
 }
@@ -47,24 +72,12 @@ function showView(e) {
     let id = `#${this.getAttribute("href")}`;
     document.querySelector(id).style.display = "block";
   } else {
-      document.querySelector(e).style.display="block"//showView("#accounts-view")
+    document.querySelector(e).style.display = "block"; //showView("#accounts-view")
   }
 }
 
-// First way
 
-// addAccountsViewBtn.addEventListener("click", function (e) {
-//   e.preventDefault();
-//   addAccountView.style.display = "block";
-//   accountsView.style.display = "none";
-// });
-
-// accountsViewBtn.addEventListener("click", function (e) {
-//   e.preventDefault();
-//   addAccountView.style.display = "none";
-//   accountsView.style.display = "block";
-// });
-
+// Create Account Table
 createAccountsTable();
 
 function createAccountsTable() {
@@ -78,8 +91,42 @@ function createAccountsTable() {
         <td>${account.lastname}</td>
         <td>${account.email}</td>
         <td>${account.phone}</td>
+        <td><button data-id="${i}" class="edit-btn btn btn-sm btn-warning form-control">Edit</button></td>
+        <td><button data-id="${i}" class="delete-btn btn btn-sm btn-danger form-control">Delete</button></td>
     </tr>
         `;
   }
   accountsTableBody.innerHTML = htmlAccounts;
+
+//   All Delete and Edit Btns
+  let allDeleteBtns = document.querySelectorAll(".delete-btn");
+  let allEditBtns = document.querySelectorAll(".edit-btn");
+
+  for (let i = 0; i < allDeleteBtns.length; i++) {
+    allDeleteBtns[i].addEventListener("click", deleteAccounts);
+    allEditBtns[i].addEventListener("click", editAccounts);
+  }
+}
+
+function deleteAccounts() {
+  let id = this.getAttribute("data-id");
+  db.splice(id, 1);
+  createAccountsTable();
+  showView("#accounts-view");
+}
+
+function editAccounts() {
+  id = this.getAttribute("data-id");
+  let selectedAccount = db[id];
+  eId.value = selectedAccount.id;
+  eName.value = selectedAccount.name;
+  eLastName.value = selectedAccount.lastname;
+  eEmail.value = selectedAccount.email;
+  ePhone.value = selectedAccount.phone;
+  showView("#edit-account-view");
+}
+
+// Local Storage
+function save() {
+  localStorage.db = JSON.stringify(db);
 }
